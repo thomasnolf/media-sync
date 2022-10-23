@@ -19,7 +19,8 @@ public class MyReactiveMessagingApplication {
      * Sends message to the "words-out" channel, can be used from a JAX-RS resource or any bean of your application.
      * Messages are sent to the broker.
      **/
-    void onStart(@Observes StartupEvent ev) {
+    void onStart(@Observes StartupEvent ev){
+
         Stream.of("Hello", "with", "SmallRye", "reactive", "message").forEach(string -> emitter.send(string));
     }
 
@@ -29,15 +30,17 @@ public class MyReactiveMessagingApplication {
      **/
     @Incoming("words-in")
     @Outgoing("uppercase")
-    public Message<String> toUpperCase(Message<String> message) {
+    public Message<String> toUpperCase(Message<String> message){
+
         return message.withPayload(message.getPayload().toUpperCase());
     }
 
     /**
      * Consume the uppercase channel (in-memory) and print the messages.
      **/
-    @Incoming("uppercase")
-    public void sink(String word) {
+    @Incoming("sync-playlist")
+    public void sink(SyncModel word){
+
         System.out.println(">> " + word);
     }
 }
