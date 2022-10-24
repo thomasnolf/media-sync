@@ -1,6 +1,6 @@
-package com.tnolf.deezer.model;
+package com.tnolf.media.providers.deezer.api.model;
 
-public class User {
+public class DeezerUser {
     public int id;
     public String name;
     public String lastname;

@@ -1,11 +1,12 @@
-package com.tnolf.deezer;
+package com.tnolf.media.providers.deezer.api.client;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.quarkus.security.UnauthorizedException;
+import com.tnolf.media.providers.deezer.api.model.DeezerFailure;
 import lombok.extern.log4j.Log4j2;
 
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
@@ -14,8 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Log4j2
-public class DeezerFilter implements ClientResponseFilter {
+public class DeezerResponseFilter implements ClientResponseFilter {
     @Override
     public void filter(ClientRequestContext clientRequestContext, ClientResponseContext clientResponseContext) throws IOException{
 
@@ -36,10 +36,9 @@ public class DeezerFilter implements ClientResponseFilter {
         clientResponseContext.setEntityStream(secondClone);
 
         if( response.error != null ){
-            log.error("Deezer responded with an error code: " + response);
             String message = response.error.message;
             if( response.error.code == 300 ){
-                throw new UnauthorizedException(message);
+                throw new NotAuthorizedException(message);
             }
             throw new InternalServerErrorException(message);
         }
